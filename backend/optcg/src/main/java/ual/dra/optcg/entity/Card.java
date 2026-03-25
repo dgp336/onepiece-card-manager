@@ -1,4 +1,4 @@
-package ual.dra.entity;
+package ual.dra.optcg.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

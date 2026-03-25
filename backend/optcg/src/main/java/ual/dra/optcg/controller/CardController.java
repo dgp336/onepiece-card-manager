@@ -1,4 +1,4 @@
-package ual.dra.controller;
+package ual.dra.optcg.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

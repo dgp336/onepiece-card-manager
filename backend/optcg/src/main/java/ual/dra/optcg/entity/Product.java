@@ -1,4 +1,4 @@
-package ual.dra.entity;
+package ual.dra.optcg.entity;
 
 import java.sql.Date;
 
