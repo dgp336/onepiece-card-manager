@@ -1,7 +1,5 @@
 package ual.dra.optcg.entity;
 
-import java.sql.Date;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -25,13 +23,13 @@ public class Product {
     private String url;
     private String marketPrice;
     private String lowPrice;
-    private Date priceDate;
+    private String priceDate;
     private String variant;
 
     public Product() {
     }
 
-    public Product(Card card, int productId, String url, String marketPrice, String lowPrice, Date priceDate, String variant) {
+    public Product(Card card, int productId, String url, String marketPrice, String lowPrice, String priceDate, String variant) {
         this.card = card;
         this.productId = productId;
         this.url = url;
@@ -77,10 +75,10 @@ public class Product {
     public void setLowPrice(String lowPrice) {
         this.lowPrice = lowPrice;
     }
-    public Date getPriceDate() {
+    public String getPriceDate() {
         return priceDate;
     }
-    public void setPriceDate(Date priceDate) {
+    public void setPriceDate(String priceDate) {
         this.priceDate = priceDate;
     }
     public String getVariant() {
