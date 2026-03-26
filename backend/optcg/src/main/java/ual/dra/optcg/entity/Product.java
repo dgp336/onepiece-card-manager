@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name = "products")
@@ -20,8 +18,6 @@ public class Product {
     private Card card;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
     private int productId;
     private String url;
     private String marketPrice;
@@ -41,14 +37,6 @@ public class Product {
         this.lowPrice = lowPrice;
         this.priceDate = priceDate;
         this.variant = variant;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public Card getCard() {
