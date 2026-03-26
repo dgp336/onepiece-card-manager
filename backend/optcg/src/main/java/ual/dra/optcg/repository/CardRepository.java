@@ -5,7 +5,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import ual.dra.optcg.entity.Card;
 
-@RepositoryRestResource
+@RepositoryRestResource(path = "cards")
 public interface CardRepository extends CrudRepository<Card, Long> {
+
     
+
 }
