@@ -29,6 +29,8 @@ public class Card {
     @NotBlank(message = "Card number is required")
     private String number;
 
+    @NotBlank(message = "Card name is required")
+    private String name;
     private String cost;
     private String attribute;
     private String type;
@@ -82,6 +84,14 @@ public class Card {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCost() {

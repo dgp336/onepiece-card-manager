@@ -47,7 +47,7 @@ public class CardController {
                 .orElseThrow(() -> new RuntimeException("Card not found with id: " + cardId));
 
         if (card.getProducts() != null) {
-            card.getProducts().removeIf(p -> p.getId() == productId);
+            card.getProducts().removeIf(p -> p.getProductId() == productId);
         }
 
         Card updated = cardRepository.save(card);
