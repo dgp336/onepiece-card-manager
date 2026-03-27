@@ -56,8 +56,6 @@ Available services:
 - Backend: http://localhost:8080/api
 - Database: `localhost:5432`
 
-For full Docker Compose usage, logs, and card data loading commands, see [scripts/README.md](scripts/README.md).
-
 ## 🔄 Card Management
 Useful endpoints:
 
