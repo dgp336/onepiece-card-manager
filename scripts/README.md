@@ -1,132 +1,132 @@
 # Docker Compose - One Piece Card Manager
 
-Este archivo `docker-compose.yml` orquesta los servicios necesarios para ejecutar la aplicación completa:
+This `docker-compose.yml` file orchestrates the services required to run the full application:
 
-- **PostgreSQL Database**: Base de datos del backend
-- **Backend**: API Spring Boot en el puerto 8080
-- **Frontend**: Aplicación Angular/Node.js en el puerto 3000
+- **PostgreSQL Database**: Backend database
+- **Backend**: Spring Boot API on port 8080
+- **Frontend**: Angular/Node.js application on port 3000
 
-## Requisitos
+## Requirements
 
 - Docker
 - Docker Compose
 
-## Uso
+## Usage
 
-### Iniciar todos los servicios
+### Start all services
 
 ```bash
 docker-compose up -d
 ```
 
-Este comando:
-1. Construye y inicia la base de datos PostgreSQL
-2. Compila y ejecuta el backend (Spring Boot)
-3. Compila y ejecuta el frontend
+This command:
+1. Builds and starts the PostgreSQL database
+2. Builds and runs the backend (Spring Boot)
+3. Builds and runs the frontend
 
-### Ver los logs
+### View logs
 
 ```bash
-# Todos los servicios
+# All services
 docker-compose logs -f
 
-# Un servicio específico
+# A specific service
 docker-compose logs -f backend
 docker-compose logs -f frontend
 docker-compose logs -f postgresql_database
 ```
 
-### Detener los servicios
+### Stop services
 
 ```bash
 docker-compose down
 ```
 
-Para eliminar también los volúmenes:
+To also remove volumes:
 
 ```bash
 docker-compose down -v
 ```
 
-## Puertos
+## Ports
 
 - **Backend**: http://localhost:8080
 - **Frontend**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
 
-## Configuración de la Base de Datos
+## Database Configuration
 
-- Usuario: `user`
-- Contraseña: `pass`
-- Base de datos: `db`
+- User: `user`
+- Password: `pass`
+- Database: `db`
 
-## Notas
+## Notes
 
-- Los servicios están conectados a través de la red `onepiece-network`
-- El frontend se inicia después del backend (dependencia definida)
-- El backend se inicia después de la base de datos (dependencia definida)
-- Los volúmenes de PostgreSQL se pierde al usar `docker-compose down -v`
+- Services are connected through the `onepiece-network` network
+- The frontend starts after the backend (defined dependency)
+- The backend starts after the database (defined dependency)
+- PostgreSQL volumes are removed when using `docker-compose down -v`
 
 ---
 
-# Cargue de Datos de Cartas
+# Card Data Loading
 
-El sistema incluye funcionalidad automática y manual para cargar datos de cartas desde https://cdn.cardkaizoku.com/card_data.json
+The system includes automatic and manual functionality to load card data from https://cdn.cardkaizoku.com/card_data.json
 
-## Cargue Automático
+## Automatic Loading
 
-Al iniciar el backend, si la base de datos está vacía, se cargarán automáticamente todos los datos de cartas.
+When the backend starts, if the database is empty, all card data is loaded automatically.
 
-## Cargue Manual
+## Manual Loading
 
-Hay dos formas de cargar datos manualmente:
+There are two ways to load data manually:
 
-### Opción 1: Usar el script bash
+### Option 1: Use the bash script
 
 ```bash
-# Cargar datos (solo si la BD está vacía)
+# Load data (only if DB is empty)
 ./load-card-data.sh load
 
-# Recargar datos (elimina y vuelve a cargar)
+# Reload data (clears and loads again)
 ./load-card-data.sh reload
 
-# Limpiar todos los datos
+# Clear all data
 ./load-card-data.sh clear
 
-# Mostrar ayuda
+# Show help
 ./load-card-data.sh help
 ```
 
-### Opción 2: Usar curl directamente
+### Option 2: Use curl directly
 
 ```bash
-# Cargar datos
+# Load data
 curl -X POST http://localhost:8080/cards/load-data
 
-# Recargar datos
+# Reload data
 curl -X POST http://localhost:8080/cards/reload-data
 
-# Limpiar datos
+# Clear data
 curl -X DELETE http://localhost:8080/cards/clear-all
 ```
 
-## Respuesta de los Endpoints
+## Endpoint Response
 
-La respuesta es un JSON con el siguiente formato:
+The response is a JSON object with the following format:
 
 ```json
 {
   "success": true,
-  "message": "Cartas cargadas exitosamente",
+  "message": "Cards loaded successfully",
   "cardsLoaded": 5000
 }
 ```
 
-## Notas del Cargue
+## Loading Notes
 
-- El endpoint `/cards/load-data` solo carga si la BD está vacía
-- El endpoint `/cards/reload-data` limpia primero y luego carga
-- El cargue es idempotente: puedes ejecutarlo varias veces sin problemas
-- Los tiempos de cargue dependen de la velocidad de internet y la velocidad de la base de datos
-- Se recomienda ejecutar el cargue una sola vez para optimizar el rendimiento
+- The `/cards/load-data` endpoint only loads data if the DB is empty
+- The `/cards/reload-data` endpoint clears first and then loads data
+- Loading is idempotent: you can run it multiple times safely
+- Loading time depends on internet speed and database performance
+- Running the load once is recommended for optimal performance
 
