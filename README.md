@@ -21,6 +21,7 @@ The project runs with Docker Compose and is composed of **three services**:
    - Spring Boot + JPA
    - Port: `8080`
    - Exposes the API (`/api`) and loads cards into the database.
+   - CardDataLoaderService.java downloads .json file containing all the cards.
 
 3. **Frontend (`onepiece-frontend`)**
    - Vite + JavaScript
