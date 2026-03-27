@@ -306,13 +306,13 @@ body {
   opacity: 0.2;
 }
 
-.cost-buttons, .counter-buttons {
+.cost-buttons, .counter-buttons, .type-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.cost-btn, .counter-btn {
+.cost-btn, .counter-btn, .type-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
@@ -323,11 +323,11 @@ body {
   transition: all 0.2s;
 }
 
-.cost-btn:hover, .counter-btn:hover {
+.cost-btn:hover, .counter-btn:hover, .type-btn:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.cost-btn.active, .counter-btn.active {
+.cost-btn.active, .counter-btn.active, .type-btn.active {
   background: var(--primary);
   border-color: var(--primary);
   color: white;

@@ -1,28 +1,71 @@
 # One Piece Card Explorer 🏴‍☠️
 
-![License](https://img.shields.io/badge/license-MIT-green)
-![Angular](https://img.shields.io/badge/Angular-17-red)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+Application to explore, filter, and browse One Piece TCG cards with database persistence.
 
-**One Piece Card Explorer** is a comprehensive platform designed for One Piece TCG collectors and players. It enables card visualization, advanced filtering, and management of a card database obtained through reverse engineering of JSON data.
+## 🚀 Main Features
+- Card loading from a remote JSON source into the backend.
+- Card persistence in PostgreSQL.
+- Global search and combinable filters (set, name, type, color, cost, trait, and counter).
+- Card detail view in a modal.
+- REST API to handle data reload and cleanup.
 
-This project was developed as part of the **Rapid Application Development (DRA)** course at the University of Almería.
+## 🧱 Architecture (3 Containers)
+The project runs with Docker Compose and is composed of **three services**:
 
-## 🚀 Features
-- **Dynamic Filtering:** Search by color (hex), cost, type, and set.
-- **Robust Architecture:** Scalable backend with Spring Boot following Service-Repository patterns.
-- **Reactive Interface:** Frontend built with Angular using lazy loading.
-- **Persistence:** Relational PostgreSQL database for managing cards and products.
+1. **Database (`postgresql_database`)**
+   - Image: `postgres:16`
+   - Port: `5432`
+   - Stores cards and related data.
+
+2. **Backend (`onepiece-backend`)**
+   - Spring Boot + JPA
+   - Port: `8080`
+   - Exposes the API (`/api`) and loads cards into the database.
+
+3. **Frontend (`onepiece-frontend`)**
+   - Vite + JavaScript
+   - Port: `3000`
+   - Consumes the backend API and renders the search/filter interface.
 
 ## 🛠️ Technology Stack
-- **Frontend:** Angular 17+ (TypeScript, CSS3, HTML5).
-- **Backend:** Java 17, Spring Boot 3 (Spring Data JPA, Hibernate).
-- **Database:** PostgreSQL.
-- **Tools:** Docker, Maven, Git.
+- **Frontend:** Vite, JavaScript, CSS.
+- **Backend:** Java 21, Spring Boot, Spring Data JPA.
+- **Database:** PostgreSQL 16.
+- **Infrastructure:** Docker, Docker Compose.
+
+## 📦 Project Structure
+```text
+onepiece-card-manager/
+├── backend/optcg/           # API Spring Boot
+├── frontend/optcg/          # Web application (Vite)
+├── scripts/                 # Docker Compose and helper scripts
+├── README.md                # Unified documentation
+├── README-ESP.md            # Reference to README.md
+└── README-ENG.md            # Reference to README.md
+```
+
+## ▶️ Run with Docker
+From the project root:
+
+```bash
+cd scripts
+sudo docker compose up -d --build
+```
+
+Available services:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8080/api
+- Database: `localhost:5432`
+
+## 🔄 Card Management
+Useful endpoints:
+
+- Reload cards: `POST http://localhost:8080/api/cards/reload-data`
+- Clear cards: `DELETE http://localhost:8080/api/cards/clear-all`
+- Fetch cards: `GET http://localhost:8080/api/cards`
 
 ## 📄 License
-This project is **Open Source** and licensed under the **MIT** license. You are free to use, modify, and distribute it.
+Project licensed under **MIT**. See [LICENSE.md](LICENSE.md).
 
 ---
-Developed with ❤️ by David Granados Pérez - 2026.
+Developed by David Granados Pérez (2026).

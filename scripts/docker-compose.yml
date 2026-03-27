@@ -1,0 +1,62 @@
+services:
+  postgresql_database:
+    image: postgres:16
+    container_name: postgresql_database
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - onepiece-network
+
+  backend:
+    build:
+      context: ../backend/optcg
+      dockerfile: Dockerfile
+    container_name: onepiece-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql_database:5432/db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresql_database:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - onepiece-network
+
+  frontend:
+    build:
+      context: ../frontend/optcg
+      dockerfile: Dockerfile
+    container_name: onepiece-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_started
+    environment:
+      VITE_API_URL: http://backend:8080/api
+    restart: unless-stopped
+    networks:
+      - onepiece-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  onepiece-network:
+    driver: bridge

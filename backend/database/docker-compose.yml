@@ -1,0 +1,21 @@
+services:
+  postgresql_database:
+    image: postgres
+    container_name: postgresql_database
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/pgsql/data
+    restart: unless-stopped
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data

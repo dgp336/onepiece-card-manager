@@ -1,5 +1,6 @@
 import "./style.css";
-import cardData from "./card_data.json";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 document.querySelector("#app").innerHTML = `
   <div class="app-container">
@@ -17,7 +18,7 @@ document.querySelector("#app").innerHTML = `
 
           <div class="filter-group">
             <label>Card Set</label>
-            <input type="text" id="filterSet" placeholder="example: OP012">
+            <input type="text" id="filterSet" placeholder="example: OP12">
           </div>
 
           <div class="filter-group">
@@ -27,7 +28,12 @@ document.querySelector("#app").innerHTML = `
 
           <div class="filter-group">
             <label>Card Type</label>
-            <input type="text" id="filterType" placeholder="example: CHARACTER">
+            <div class="type-buttons">
+              <button class="type-btn" data-type="LEADER">LEADER</button>
+              <button class="type-btn" data-type="CHARACTER">CHARACTER</button>
+              <button class="type-btn" data-type="EVENT">EVENT</button>
+              <button class="type-btn" data-type="STAGE">STAGE</button>
+            </div>
           </div>
 
           <div class="filter-group">
@@ -76,7 +82,7 @@ document.querySelector("#app").innerHTML = `
 
       <!-- MAIN CONTENT / CARD GRID -->
       <main class="content">
-        <p id="message" class="message">Type to show cards or use filters</p>
+        <p id="message" class="message">Loading cards...</p>
         <div id="grid" class="card-grid hidden"></div>
       </main>
     </div>
@@ -106,14 +112,59 @@ const inputs = {
   general: document.getElementById("searchInput"),
   set: document.getElementById("filterSet"),
   name: document.getElementById("filterName"),
-  type: document.getElementById("filterType"),
   feature: document.getElementById("filterFeature"),
 };
 
 let selectedColors = new Set();
+let selectedType = "";
 let selectedCost = "";
 let selectedCounter = "";
 let debounceTimeout;
+let cardData = [];
+
+async function loadCardsFromBackend() {
+  message.classList.remove("hidden");
+  message.textContent = "Loading cards from backend...";
+  grid.classList.add("hidden");
+
+  try {
+    let page = 0;
+    let totalPages = 1;
+    const allCards = [];
+
+    while (page < totalPages) {
+      const response = await fetch(`${API_BASE_URL}/cards?page=${page}&size=1000`);
+      if (!response.ok) {
+        throw new Error(`Backend error: ${response.status}`);
+      }
+
+      const payload = await response.json();
+      const pageCards = payload?._embedded?.cards || [];
+      allCards.push(...pageCards);
+      totalPages = payload?.page?.totalPages || 1;
+      page += 1;
+    }
+
+    cardData = allCards.map((card) => ({
+      cardNumber: card.number,
+      cardName: card.name,
+      cardType: card.type,
+      cardSet: card.set,
+      color: card.color,
+      feature: card.feature,
+      cost: card.cost,
+      counter: card.counter,
+      power: card.power,
+      text: card.text,
+      bucketImg: card.img,
+    }));
+
+    applyFilters();
+  } catch (error) {
+    console.error("Error loading cards from backend:", error);
+    message.textContent = "Error loading cards from backend";
+  }
+}
 
 toggleFiltersBtn.addEventListener("click", () => {
   filterSidebar.classList.toggle("sidebar-hidden");
@@ -174,6 +225,22 @@ counterBtns.forEach((btn) => {
   });
 });
 
+const typeBtns = document.querySelectorAll(".type-btn");
+typeBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const type = btn.getAttribute("data-type");
+    if (selectedType === type) {
+      selectedType = "";
+      btn.classList.remove("active");
+    } else {
+      selectedType = type;
+      typeBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+    triggerUpdate();
+  });
+});
+
 Object.values(inputs).forEach((input) => {
   input.addEventListener("input", triggerUpdate);
 });
@@ -181,15 +248,15 @@ Object.values(inputs).forEach((input) => {
 clearFiltersBtn.addEventListener("click", () => {
   Object.values(inputs).forEach((i) => (i.value = ""));
   selectedColors.clear();
+  selectedType = "";
   selectedCost = "";
   selectedCounter = "";
   colorSlices.forEach((s) => s.classList.remove("dimmed", "selected"));
+  typeBtns.forEach((b) => b.classList.remove("active"));
   costBtns.forEach((b) => b.classList.remove("active"));
   counterBtns.forEach((b) => b.classList.remove("active"));
   selectedColorLabel.textContent = "";
-  grid.classList.add("hidden");
-  message.classList.remove("hidden");
-  message.textContent = "Type to show cards or use filters";
+  applyFilters();
 });
 
 function triggerUpdate() {
@@ -201,30 +268,25 @@ function applyFilters() {
   const general = inputs.general.value.trim().toLowerCase();
   const set = inputs.set.value.trim().toLowerCase();
   const name = inputs.name.value.trim().toLowerCase();
-  const type = inputs.type.value.trim().toLowerCase();
   const feature = inputs.feature.value.trim().toLowerCase();
 
   const isAnyFilterActive =
     general ||
     set ||
     name ||
-    type ||
+    selectedType ||
     feature ||
     selectedColors.size > 0 ||
     selectedCost ||
     selectedCounter;
 
-  if (!isAnyFilterActive) {
-    grid.classList.add("hidden");
-    message.classList.remove("hidden");
-    message.textContent = "Type to show cards or use filters";
-    return;
-  }
+  let filtered = cardData;
 
-  const filtered = cardData.filter((c) => {
+  if (isAnyFilterActive) {
+    filtered = cardData.filter((c) => {
     if (set && !c.cardSet?.toLowerCase().includes(set)) return false;
     if (name && !c.cardName?.toLowerCase().includes(name)) return false;
-    if (type && !c.cardType?.toLowerCase().includes(type)) return false;
+    if (selectedType && String(c.cardType ?? "").toUpperCase() !== selectedType) return false;
     if (feature && !c.feature?.toLowerCase().includes(feature)) return false;
     if (
       selectedColors.size > 0 &&
@@ -261,7 +323,8 @@ function applyFilters() {
     }
 
     return true;
-  });
+    });
+  }
 
   if (filtered.length > 0) {
     filtered.sort((a, b) => (parseInt(a.cost) || 0) - (parseInt(b.cost) || 0));
@@ -333,3 +396,5 @@ closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
 modal.querySelector(".modal-backdrop").addEventListener("click", () => {
   modal.classList.add("hidden");
 });
+
+loadCardsFromBackend();

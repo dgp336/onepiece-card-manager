@@ -27,22 +27,50 @@ public class Card {
     private long id;
 
     @NotBlank(message = "Card number is required")
+    @Column(columnDefinition = "TEXT")
     private String number;
 
     @NotBlank(message = "Card name is required")
+    @Column(columnDefinition = "TEXT")
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String cost;
+
+    @Column(columnDefinition = "TEXT")
     private String attribute;
+
+    @Column(columnDefinition = "TEXT")
     private String type;
+
+    @Column(columnDefinition = "TEXT")
     private String power;
+
+    @Column(columnDefinition = "TEXT")
     private String counter;
+
+    @Column(columnDefinition = "TEXT")
     private String color;
+
+    @Column(columnDefinition = "TEXT")
     private String feature;
+
+    @Column(columnDefinition = "TEXT")
     private String text;
+
+    @Column(columnDefinition = "TEXT")
     private String rarity;
+
+    @Column(columnDefinition = "TEXT")
     private String trigger;
+
+    @Column(columnDefinition = "TEXT")
     private String block;
+
+    @Column(columnDefinition = "TEXT")
     private String set;
+
+    @Column(columnDefinition = "TEXT")
     private String img;
 
     @RestResource(exported = false)
