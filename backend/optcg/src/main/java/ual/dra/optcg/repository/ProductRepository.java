@@ -8,7 +8,7 @@ import ual.dra.optcg.entity.Product;
 import java.util.List;
 
 @RepositoryRestResource(path = "products")
-public interface ProductRepository extends CrudRepository<Product, Long> {
+public interface ProductRepository extends CrudRepository<Product, Integer> {
 
     public List<Product> findByCardName(String name);
 
