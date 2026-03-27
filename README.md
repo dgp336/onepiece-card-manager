@@ -39,9 +39,7 @@ onepiece-card-manager/
 ├── backend/optcg/           # API Spring Boot
 ├── frontend/optcg/          # Web application (Vite)
 ├── scripts/                 # Docker Compose and helper scripts
-├── README.md                # Unified documentation
-├── README-ESP.md            # Reference to README.md
-└── README-ENG.md            # Reference to README.md
+├── README.md                # Documentation
 ```
 
 ## ▶️ Run with Docker
